@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prototype With Slider + Projects</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 12px;
+    }
+
+    /* ------------------ NAV ------------------ */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      background: #9a9a9a;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    nav button {
+      background: #468a8a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    /* ------------------ SLIDER ------------------ */
+    .slider-container {
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto 25px auto;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .slider-track {
+      display: flex;
+      transition: transform 0.4s ease;
+    }
+
+    .slide {
+      min-width: 100%;
+      height: 300px;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 20px;
+      border-radius: 6px;
+    }
+
+    .slider-btn.left { left: 10px; }
+    .slider-btn.right { right: 10px; }
+
+    /* ------------------ PROJECTS ------------------ */
+    .projects {
+      max-width: 900px;
+      margin: 20px auto;
+    }
+
+    .projects h2 {
+      text-align: center;
+    }
+
+    .project-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    }
+
+    .project-card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .project-card img {
+      width: 100%;
+      height: 140px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .like-btn {
+      margin-top: 8px;
+      background: #e0e0e0;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .like-btn.liked {
+      background: #ff4d4d;
+      color: white;
+    }
+
+    /* ------------------ EXTRA SECTIONS ------------------ */
+    .section {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .section h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .about-content {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .about-content img {
+      width: 200px;
+      border-radius: 10px;
+      height: auto;
+    }
+
+    .skills-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      margin-top: 15px;
+    }
+
+    .skill-box {
+      background: #468a8a;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    .contact-form button {
+      background: #468a8a;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <button>Home</button>
+    <button>About</button>
+    <button>Help</button>
+  </nav>
+
+  <!-- IMAGE SLIDER -->
+  <div class="slider-container">
+    <div class="slider-track" id="sliderTrack">
+      <div class="slide"><img src="./image1.jpeg" /></div>
+      <div class="slide"><img src="./image2.jpeg" /></div>
+      <div class="slide"><img src="./image3.jpeg" /></div>
+    </div>
+
+    <button class="slider-btn left" id="slideLeft">&#9664;</button>
+    <button class="slider-btn right" id="slideRight">&#9654;</button>
+  </div>
+
+  <!-- PROJECT SECTION -->
+  <section class="projects">
+    <h2>My Projects</h2>
+
+    <div class="project-grid">
+      <div class="project-card">
+        <img src="./image1.jpeg">
+        <h3>Project One</h3>
+        <button class="like-btn">Like ❤️</button>
+      </div>
+
+      <div class="project-card">
+        <img src="./image2.jpeg">
+        <h3>Project Two</h3>
+        <button class="like-btn">Like ❤️</button>
+      </div>
+
+      <div class="project-card">
+        <img src="./image3.jpeg">
+        <h3>Project Three</h3>
+        <button class="like-btn">Like ❤️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="section">
+    <h2>About Me</h2>
+    <div class="about-content">
+      <img src="./image1.jpeg">
+      <p>
+        I am a full-stack developer who loves building tools, solving problems,
+        and creating useful projects. I specialize in frontend technologies and
+        enjoy clean UI design and responsive layouts.
+      </p>
+    </div>
+  </section>
+
+  <!-- SKILLS SECTION -->
+  <section class="section">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-box">HTML</div>
+      <div class="skill-box">CSS</div>
+      <div class="skill-box">JavaScript</div>
+      <div class="skill-box">React</div>
+      <div class="skill-box">Vue</div>
+      <div class="skill-box">Laravel</div>
+      <div class="skill-box">C++</div>
+      <div class="skill-box">Node.js</div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="section">
+    <h2>Contact Me</h2>
+    <form class="contact-form">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <script>
+    /* ------------ SLIDER LOGIC ------------ */
+    const track = document.getElementById("sliderTrack");
+    const leftBtn = document.getElementById("slideLeft");
+    const rightBtn = document.getElementById("slideRight");
+
+    let index = 0;
+
+    const moveSlider = () => {
+      track.style.transform = `translateX(-${index * 100}%)`;
+    };
+
+    rightBtn.onclick = () => {
+      if (index < track.children.length - 1) index++;
+      else index = 0; 
+      moveSlider();
+    };
+
+    leftBtn.onclick = () => {
+      if (index > 0) index--;
+      else index = track.children.length - 1;
+      moveSlider();
+    };
+
+    /* ------------ LIKE BUTTONS ------------ */
+    document.querySelectorAll(".like-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("liked");
+        btn.textContent = btn.classList.contains("liked")
+          ? "Liked ❤️"
+          : "Like ❤️";
+      });
+    });
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ستارة النقاط المتموجة</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: #0d0d0d; /* خلفية داكنة جدًا لتناسب اللون القرمزي */
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="particleCurtain"></canvas>
+
+    <script>
+      const canvas = document.getElementById("particleCurtain");
+      const ctx = canvas.getContext("2d");
+
+      // **تعديل 1: الستارة تشغل نصف الشاشة**
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight / 2;
+
+      const mouse = {
+        x: null,
+        y: null,
+        radius: 50, // زيادة طفيفة في نصف قطر التأثير
+      };
+
+      window.addEventListener("mousemove", (event) => {
+        mouse.x = event.x;
+        mouse.y = event.y;
+      });
+
+      window.addEventListener("mouseout", () => {
+        mouse.x = null;
+        mouse.y = null;
+      });
+
+      let particlesArray = [];
+
+      class Particle {
+        constructor(x, y, size) {
+          this.x = x;
+          this.y = y;
+          this.baseX = this.x;
+          this.baseY = this.y;
+          this.size = size;
+          this.density = Math.random() * 40 + 5; // عامل "العودة" إلى الأصل
+        }
+
+        draw() {
+          // **تعديل 2: تغيير لون النقاط إلى قرمزي**
+          ctx.fillStyle = "crimson"; // يمكنك استخدام 'red' أو أي درجة أخرى
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        update(time) {
+          // التفاعل مع الفأرة (نفس المنطق السابق)
+          let dx = mouse.x - this.x;
+          let dy = mouse.y - this.y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          let forceDirectionX = dx / distance;
+          let forceDirectionY = dy / distance;
+          let maxDistance = mouse.radius;
+          let force = (maxDistance - distance) / maxDistance;
+
+          let directionX = 0;
+          let directionY = 0;
+
+          if (distance < mouse.radius) {
+            directionX = -forceDirectionX * force * this.density;
+            directionY = -forceDirectionY * force * this.density;
+          }
+
+          // **تعديل 3: تعزيز حركة التموج**
+          // استخدمنا معاملات أكبر وأبطأ لإنشاء منحنيات واضحة
+          const waveAmplitude = 10; // مدى ارتفاع الموجة
+          const waveFrequency = 5.05; // مدى تكرار الموجة (رقم أصغر = موجات أوسع)
+
+          // حركة تموج عمودية واضحة تعتمد على موقع X والوقت
+          const waveY =
+            Math.sin(this.baseX * waveFrequency + time) * waveAmplitude;
+
+          // حركة تموج أفقية خفيفة
+          const waveX =
+            Math.cos(this.baseY * waveFrequency + time) * (waveAmplitude / 2);
+
+          // العودة إلى الموضع الأساسي مع التموج
+          this.x += directionX + (this.baseX + waveX - this.x) * 0.02; // تباطؤ العودة لجعل الحركة أكثر سلاسة
+          this.y += directionY + (this.baseY + waveY - this.y) * 0.05;
+        }
+      }
+
+      function init() {
+        particlesArray = [];
+        const gap = 25;
+        for (let y = gap; y < canvas.height; y += gap) {
+          for (let x = gap; x < canvas.width; x += gap) {
+            // **تعديل 4: زيادة حجم النقاط**
+            particlesArray.push(new Particle(x, y, 3));
+          }
+        }
+      }
+
+      let animationTime = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        animationTime += 0.005; // سرعة التموج
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update(animationTime);
+          particlesArray[i].draw();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      animate();
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight / 2;
+        init();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>25 Interactive 3D Boxes</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let mouse = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+      };
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const maxOffset = 25;
+        const offsetX = (mouse.x / canvas.width - 0.5) * maxOffset * 2;
+        const offsetY = (mouse.y / canvas.height - 0.5) * maxOffset * 2;
+
+        // --- التغييرات هنا ---
+        const boxSize = 60;
+        const gap = 20;
+        const gridSize = 5; // 5x5 grid
+
+        // حساب نقطة البداية لتوسيط الشبكة
+        const totalGridWidth = gridSize * boxSize + (gridSize - 1) * gap;
+        const totalGridHeight = gridSize * boxSize + (gridSize - 1) * gap;
+        const startX = (canvas.width - totalGridWidth) / 2;
+        const startY = (canvas.height - totalGridHeight) / 2;
+
+        // حلقة لرسم شبكة 5x5 (25 صندوق)
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
+            const x = startX + i * (boxSize + gap);
+            const y = startY + j * (boxSize + gap);
+
+            const x_back = x + offsetX;
+            const y_back = y + offsetY;
+
+            // تلوين الأوجه
+            ctx.fillStyle = "#cccccc"; // الوجه العلوي/السفلي
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x_back, y_back);
+            ctx.lineTo(x_back + boxSize, y_back);
+            ctx.lineTo(x + boxSize, y);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "#aaaaaa"; // الوجه الجانبي
+            ctx.beginPath();
+            ctx.moveTo(x + boxSize, y);
+            ctx.lineTo(x_back + boxSize, y_back);
+            ctx.lineTo(x_back + boxSize, y_back + boxSize);
+            ctx.lineTo(x + boxSize, y + boxSize);
+            ctx.closePath();
+            ctx.fill();
+
+            // الوجه الأمامي
+            ctx.fillStyle = "#eeeeee";
+            ctx.fillRect(x, y, boxSize, boxSize);
+
+            // رسم الحدود
+            ctx.strokeStyle = "#333333";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(x, y, boxSize, boxSize);
+            ctx.strokeRect(x_back, y_back, boxSize, boxSize);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x_back, y_back);
+            ctx.moveTo(x + boxSize, y);
+            ctx.lineTo(x_back + boxSize, y_back);
+            ctx.moveTo(x + boxSize, y + boxSize);
+            ctx.lineTo(x_back + boxSize, y_back + boxSize);
+            ctx.moveTo(x, y + boxSize);
+            ctx.lineTo(x_back, y_back + boxSize);
+            ctx.stroke();
+          }
+        }
+      }
+
+      window.addEventListener("mousemove", (event) => {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+        requestAnimationFrame(draw); // استخدام requestAnimationFrame لأداء أفضل
+      });
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        draw();
+      });
+
+      draw(); // الرسم الأولي
+    </script>
+  </body>
+</html>

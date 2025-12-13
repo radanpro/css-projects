@@ -1,0 +1,14 @@
+*.jpeg
+*.jpg
+*.png
+*.gif
+*.svg
+*.webp
+*.bmp
+*.tiff
+*.ico
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak

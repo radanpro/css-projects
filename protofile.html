@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RADAN | Digital Architect</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+      :root {
+        --bg-color: #050505;
+        --text-color: #e0e0e0;
+        --accent: #ff2a6d;
+        --accent-2: #05d9e8;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --font-display: "Syne", sans-serif;
+        --font-body: "Inter", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-body);
+        overflow-x: hidden;
+        width: 100%;
+        cursor: none;
+      }
+
+      /* --- UTILITIES --- */
+      .container {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      .section-padding {
+        padding: 8rem 0;
+      }
+
+      /* --- PRELOADER --- */
+      .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .loader-text {
+        font-family: var(--font-display);
+        font-size: 5rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -2px;
+      }
+      .loader-line {
+        width: 0%;
+        height: 2px;
+        background: var(--accent);
+        margin-top: 20px;
+      }
+
+      /* --- CUSTOM CURSOR --- */
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent);
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+      }
+      .cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s, background-color 0.3s;
+      }
+      body.hovering .cursor-outline {
+        width: 70px;
+        height: 70px;
+        background-color: rgba(255, 42, 109, 0.1);
+        border-color: var(--accent);
+        backdrop-filter: blur(2px);
+      }
+
+      /* --- WEBGL BACKGROUND --- */
+      #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      /* --- NAV --- */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        mix-blend-mode: exclusion;
+      }
+      .logo {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #fff;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+      .nav-link {
+        text-decoration: none;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+      /* --- HERO --- */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: relative;
+        text-align: center;
+      }
+      .hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(4rem, 15vw, 14rem);
+        line-height: 0.85;
+        font-weight: 800;
+        color: #fff;
+        text-transform: uppercase;
+        mix-blend-mode: overlay;
+      }
+      .hero-subtitle {
+        margin-top: 2rem;
+        font-size: 1.2rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-weight: 600;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+        padding: 0.5rem 2rem;
+      }
+
+      /* --- MARQUEE --- */
+      .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        background: var(--accent);
+        transform: skewX(-10deg) translateY(2rem);
+        margin-bottom: 4rem;
+      }
+      .marquee-track {
+        display: flex;
+        white-space: nowrap;
+        animation: scroll 20s linear infinite;
+      }
+      .marquee-item {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        font-weight: 800;
+        color: #000;
+        text-transform: uppercase;
+        padding-right: 4rem;
+        transform: skewX(10deg);
+      }
+      @keyframes scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* --- FEATURED PROJECT (NEW) --- */
+      .featured-section {
+        padding: 4rem 0;
+        margin-bottom: 4rem;
+      }
+      .featured-card {
+        width: 100%;
+        height: 80vh;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      .featured-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+      }
+      .featured-card:hover .featured-img {
+        transform: scale(1.05);
+      }
+      .featured-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 3rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+      }
+      .featured-tag {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      .featured-title {
+        font-family: var(--font-display);
+        font-size: 5vw;
+        color: #fff;
+        line-height: 1;
+      }
+
+      /* --- PROJECTS GRID (TILT CARDS) --- */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 4rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 2rem;
+      }
+      .section-title {
+        font-family: var(--font-display);
+        font-size: 3rem;
+        color: #fff;
+      }
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 4rem;
+        padding: 4rem 0;
+        perspective: 1000px;
+      }
+      .project-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        height: 500px;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: perspective(1000px);
+        transition: transform 0.1s linear;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 2rem;
+        cursor: none;
+      }
+      .card-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.5;
+        transition: opacity 0.3s, transform 0.5s;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .project-card:hover .card-bg-img {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
+      .card-glare {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.3),
+          transparent 60%
+        );
+        opacity: 0;
+        pointer-events: none;
+        z-index: 2;
+        mix-blend-mode: overlay;
+      }
+      .card-content {
+        position: relative;
+        z-index: 3;
+        transform: translateZ(20px);
+        pointer-events: none;
+      }
+      .card-title {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        color: #fff;
+        line-height: 1;
+      }
+      .card-tags {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* --- ABOUT STUDIO (NEW) --- */
+      .about-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+      .about-text h3 {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
+      .about-text p {
+        font-size: 1.1rem;
+        color: #aaa;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+      }
+      .about-visual {
+        height: 600px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+      }
+      .about-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(100%);
+        transition: filter 0.5s;
+      }
+      .about-visual:hover img {
+        filter: grayscale(0%);
+      }
+
+      /* --- PHILOSOPHY (NEW) --- */
+      .philosophy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 4rem;
+      }
+      .philo-item {
+        border: 1px solid var(--border-color);
+        padding: 3rem;
+        transition: background 0.3s;
+      }
+      .philo-item:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .philo-num {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        color: var(--accent);
+        opacity: 0.5;
+        margin-bottom: 1rem;
+      }
+      .philo-title {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        color: #fff;
+        margin-bottom: 1rem;
+      }
+      .philo-desc {
+        color: #888;
+        line-height: 1.6;
+      }
+
+      /* --- SKILLS --- */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+      }
+      .skill-card {
+        border: 1px solid var(--border-color);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: border-color 0.3s;
+        transform: skewX(-5deg);
+      }
+      .skill-card:hover {
+        border-color: var(--accent);
+      }
+      .skill-icon {
+        font-size: 2.5rem;
+        color: var(--accent-2);
+        transform: skewX(5deg);
+      }
+      .skill-title {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        transform: skewX(5deg);
+      }
+
+      /* --- FOOTER --- */
+      footer {
+        margin-top: 10rem;
+        padding: 6rem 0;
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+      }
+      .footer-email {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        color: #fff;
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+        text-underline-offset: 10px;
+        margin-bottom: 2rem;
+        display: inline-block;
+        transition: color 0.3s;
+      }
+      .footer-email:hover {
+        color: var(--accent);
+      }
+      .socials {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+      }
+      .social-link {
+        color: #fff;
+        font-size: 1.5rem;
+        transition: transform 0.3s;
+      }
+      .social-link:hover {
+        color: var(--accent);
+        transform: translateY(-5px);
+      }
+
+      /* --- RESPONSIVE --- */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 15vw;
+        }
+        .nav-links {
+          display: none;
+        }
+        .projects-grid {
+          grid-template-columns: 1fr;
+          padding: 2rem 0;
+        }
+        .about-layout {
+          grid-template-columns: 1fr;
+        }
+        .featured-title {
+          font-size: 3rem;
+        }
+        .philosophy-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Preloader -->
+    <div class="preloader">
+      <div class="loader-text">RADAN</div>
+      <div class="loader-line"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- WebGL Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav>
+      <div class="logo">RADAN.</div>
+      <ul class="nav-links">
+        <li><a href="#work" class="nav-link">Works</a></li>
+        <li><a href="#studio" class="nav-link">Studio</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero container">
+        <h1 class="hero-title">
+          <span class="char-reveal">D</span><span class="char-reveal">I</span
+          ><span class="char-reveal">G</span><span class="char-reveal">I</span
+          ><span class="char-reveal">T</span><span class="char-reveal">A</span
+          ><span class="char-reveal">L</span>
+          <br />
+          <span class="char-reveal">A</span><span class="char-reveal">R</span
+          ><span class="char-reveal">C</span><span class="char-reveal">H</span
+          ><span class="char-reveal">I</span><span class="char-reveal">T</span
+          ><span class="char-reveal">E</span><span class="char-reveal">C</span
+          ><span class="char-reveal">T</span>
+        </h1>
+        <div class="hero-subtitle">Design. Code. Motion.</div>
+      </section>
+
+      <!-- Marquee -->
+      <div class="marquee-container">
+        <div class="marquee-track">
+          <span class="marquee-item"
+            >Web Development • Creative Coding • UI/UX Design • 3D WebGL •
+            Interactive Art •
+          </span>
+          <span class="marquee-item"
+            >Web Development • Creative Coding • UI/UX Design • 3D WebGL •
+            Interactive Art •
+          </span>
+        </div>
+      </div>
+
+      <!-- NEW: Featured Project Section -->
+      <section class="featured-section container">
+        <div class="section-header">
+          <h2 class="section-title">Featured Work</h2>
+        </div>
+        <a href="#" class="featured-card magnetic">
+          <img
+            src="https://picsum.photos/seed/featured/1200/800"
+            alt="Featured Project"
+            class="featured-img"
+          />
+          <div class="featured-content">
+            <span class="featured-tag">Case Study / 2024</span>
+            <h3 class="featured-title">ZERO GRAVITY</h3>
+          </div>
+        </a>
+      </section>
+
+      <!-- Works (Grid) -->
+      <section id="work" class="container">
+        <div class="section-header">
+          <h2 class="section-title">Selected Works</h2>
+          <span style="font-family: var(--font-display); color: var(--accent)"
+            >2023 — 2024</span
+          >
+        </div>
+
+        <div class="projects-grid">
+          <!-- Card 1 -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/nebula/600/800"
+              alt="Nebula Finance"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">NEBULA FINANCE</h3>
+              <p class="card-tags">WebGL / React</p>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/velocity/600/800"
+              alt="Velocity Automotive"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">VELOCITY AUTO</h3>
+              <p class="card-tags">3D Configurator</p>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/apollo/600/800"
+              alt="Apollo Studios"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">APOLLO STUDIOS</h3>
+              <p class="card-tags">Branding & Web</p>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/kinetic/600/800"
+              alt="Kinetic Art"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">KINETIC ART</h3>
+              <p class="card-tags">Creative Coding</p>
+            </div>
+          </article>
+
+          <!-- Card 5 (Added for length) -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/crypto/600/800"
+              alt="Crypto Wallet"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">CIPHER WALLET</h3>
+              <p class="card-tags">Fintech / App</p>
+            </div>
+          </article>
+
+          <!-- Card 6 (Added for length) -->
+          <article class="project-card tilt-card magnetic">
+            <img
+              src="https://picsum.photos/seed/ai/600/800"
+              alt="AI Platform"
+              class="card-bg-img"
+            />
+            <div class="card-glare"></div>
+            <div class="card-content">
+              <h3 class="card-title">SYNTH MIND</h3>
+              <p class="card-tags">AI Dashboard</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- NEW: About Studio -->
+      <section id="studio" class="section-padding container">
+        <div class="about-layout">
+          <div class="about-text reveal-on-scroll">
+            <h3>We are RADAN.</h3>
+            <p>
+              We are a digital-first design studio crafting immersive web
+              experiences. We don't just build websites; we engineer digital
+              ecosystems that tell stories, evoke emotion, and drive conversion.
+            </p>
+            <p>
+              Our philosophy is rooted in the intersection of art and code. We
+              reject the mundane and embrace the chaotic beauty of the web,
+              pushing pixels and shaders to their absolute limits.
+            </p>
+            <a
+              href="#"
+              style="
+                color: var(--accent);
+                text-decoration: none;
+                border-bottom: 1px solid var(--accent);
+              "
+              >Read our story</a
+            >
+          </div>
+          <div class="about-visual reveal-on-scroll">
+            <img
+              src="https://picsum.photos/seed/studio/800/800"
+              alt="Studio Life"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW: Philosophy -->
+      <section class="section-padding container">
+        <div class="section-header">
+          <h2 class="section-title">Philosophy</h2>
+        </div>
+        <div class="philosophy-grid">
+          <div class="philo-item reveal-on-scroll">
+            <div class="philo-num">01</div>
+            <h4 class="philo-title">Chaos & Order</h4>
+            <p class="philo-desc">
+              Balancing creative chaos with structured code to produce robust
+              applications.
+            </p>
+          </div>
+          <div class="philo-item reveal-on-scroll">
+            <div class="philo-num">02</div>
+            <h4 class="philo-title">Immersion</h4>
+            <p class="philo-desc">
+              Creating deep engagement through motion, sound, and visual
+              storytelling.
+            </p>
+          </div>
+          <div class="philo-item reveal-on-scroll">
+            <div class="philo-num">03</div>
+            <h4 class="philo-title">Performance</h4>
+            <p class="philo-desc">
+              Ensuring every pixel renders at 60fps across all devices globally.
+            </p>
+          </div>
+          <div class="philo-item reveal-on-scroll">
+            <div class="philo-num">04</div>
+            <h4 class="philo-title">Innovation</h4>
+            <p class="philo-desc">
+              Experimenting with WebGL, AI, and new browser APIs daily.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section id="expertise" class="container">
+        <div class="section-header">
+          <h2 class="section-title">Expertise</h2>
+        </div>
+        <div class="skills-grid">
+          <div class="skill-card magnetic">
+            <i class="ri-macbook-line skill-icon"></i>
+            <h4 class="skill-title">Frontend Eng.</h4>
+          </div>
+          <div class="skill-card magnetic">
+            <i class="ri-brush-line skill-icon"></i>
+            <h4 class="skill-title">UI / UX Design</h4>
+          </div>
+          <div class="skill-card magnetic">
+            <i class="ri-shape-2-line skill-icon"></i>
+            <h4 class="skill-title">3D Motion</h4>
+          </div>
+          <div class="skill-card magnetic">
+            <i class="ri-code-s-slash-line skill-icon"></i>
+            <h4 class="skill-title">Creative Tech</h4>
+          </div>
+          <div class="skill-card magnetic">
+            <i class="ri-smartphone-line skill-icon"></i>
+            <h4 class="skill-title">Mobile Dev</h4>
+          </div>
+          <div class="skill-card magnetic">
+            <i class="ri-palette-line skill-icon"></i>
+            <h4 class="skill-title">Art Direction</h4>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer id="contact" class="container">
+        <h2
+          class="section-title"
+          style="text-align: center; margin-bottom: 3rem"
+        >
+          Let's Create
+        </h2>
+        <a href="mailto:hello@radan.com" class="footer-email"
+          >hello@radan.com</a
+        >
+        <div class="socials">
+          <a href="#" class="social-link"><i class="ri-instagram-line"></i></a>
+          <a href="#" class="social-link"><i class="ri-twitter-x-line"></i></a>
+          <a href="#" class="social-link"><i class="ri-linkedin-fill"></i></a>
+          <a href="#" class="social-link"><i class="ri-dribbble-line"></i></a>
+        </div>
+        <p style="margin-top: 4rem; color: #555; font-size: 0.8rem">
+          &copy; 2024 RADAN STUDIO. ALL RIGHTS RESERVED.
+        </p>
+      </footer>
+    </main>
+
+    <script>
+      // --- 1. PRELOADER ---
+      window.addEventListener("load", () => {
+        const tl = gsap.timeline();
+        tl.to(".loader-line", {
+          width: "100%",
+          duration: 1.5,
+          ease: "power2.inOut",
+        })
+          .to(".preloader", { y: "-100%", duration: 1, ease: "expo.inOut" })
+          .from(
+            ".hero-title span",
+            {
+              y: 100,
+              opacity: 0,
+              duration: 1,
+              stagger: 0.05,
+              ease: "power3.out",
+            },
+            "-=0.5"
+          )
+          .from(".hero-subtitle", { y: 20, opacity: 0, duration: 1 }, "-=0.5");
+      });
+
+      // --- 2. LENIS SMOOTH SCROLL ---
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: "vertical",
+        gestureDirection: "vertical",
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+      });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- 3. CUSTOM CURSOR ---
+      const cursorDot = document.querySelector(".cursor-dot");
+      const cursorOutline = document.querySelector(".cursor-outline");
+      window.addEventListener("mousemove", (e) => {
+        const posX = e.clientX;
+        const posY = e.clientY;
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+        cursorOutline.animate(
+          { left: `${posX}px`, top: `${posY}px` },
+          { duration: 500, fill: "forwards" }
+        );
+      });
+      const hoverables = document.querySelectorAll(
+        "a, button, .project-card, .skill-card, .philo-item"
+      );
+      hoverables.forEach((el) => {
+        el.addEventListener("mouseenter", () =>
+          document.body.classList.add("hovering")
+        );
+        el.addEventListener("mouseleave", () =>
+          document.body.classList.remove("hovering")
+        );
+      });
+
+      // --- 4. THREE.JS BACKGROUND ---
+      const initThree = () => {
+        const container = document.getElementById("canvas-container");
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        const uniforms = {
+          u_time: { value: 0.0 },
+          u_resolution: {
+            value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+          },
+          u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
+        };
+        const fragmentShader = `
+          uniform float u_time; uniform vec2 u_resolution; uniform vec2 u_mouse;
+          vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+          float snoise(vec2 v){
+            const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+            vec2 i  = floor(v + dot(v, C.yy) ); vec2 x0 = v -   i + dot(i, C.xx);
+            vec2 i1; i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+            vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+            vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+            vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+            m = m*m ; m = m*m ; vec3 x = 2.0 * fract(p * C.www) - 1.0;
+            vec3 h = abs(x) - 0.5; vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+            m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+            vec3 g; g.x  = a0.x  * x0.x  + h.x  * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+            return 130.0 * dot(m, g);
+          }
+          void main() {
+            vec2 st = gl_FragCoord.xy/u_resolution.xy; st.x *= u_resolution.x/u_resolution.y;
+            float time = u_time * 0.1; vec2 pos = st * 2.0; float n = snoise(pos + time);
+            vec3 color1 = vec3(0.05, 0.0, 0.1); vec3 color2 = vec3(0.2, 0.0, 0.2); vec3 color3 = vec3(0.0, 0.1, 0.2);
+            float mixVal = smoothstep(-1.0, 1.0, n + sin(pos.x * 10.0 + time) * 0.2);
+            vec3 finalColor = mix(color1, color2, mixVal);
+            finalColor = mix(finalColor, color3, sin(pos.y * 5.0 + time * 0.5) * 0.5 + 0.5);
+            float dist = distance(st, vec2(0.5)); finalColor *= smoothstep(1.2, 0.2, dist);
+            gl_FragColor = vec4(finalColor, 1.0);
+          }`;
+        const vertexShader = `void main() { gl_Position = vec4( position, 1.0 ); }`;
+        const material = new THREE.ShaderMaterial({
+          uniforms: uniforms,
+          fragmentShader: fragmentShader,
+          vertexShader: vertexShader,
+        });
+        const plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+        document.addEventListener("mousemove", (e) => {
+          uniforms.u_mouse.value.x = e.clientX / window.innerWidth;
+          uniforms.u_mouse.value.y = 1.0 - e.clientY / window.innerHeight;
+        });
+        const animate = () => {
+          requestAnimationFrame(animate);
+          uniforms.u_time.value += 0.01;
+          renderer.render(scene, camera);
+        };
+        animate();
+        window.addEventListener("resize", () => {
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          uniforms.u_resolution.value.x = window.innerWidth;
+          uniforms.u_resolution.value.y = window.innerHeight;
+        });
+      };
+      initThree();
+
+      // --- 5. 3D TILT CARDS (NEXUS STYLE) ---
+      const cards = document.querySelectorAll(".tilt-card");
+      cards.forEach((card) => {
+        const glare = card.querySelector(".card-glare");
+        card.addEventListener("mousemove", (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -10;
+          const rotateY = ((x - centerX) / centerX) * 10;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+          glare.style.opacity = "1";
+          glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4), transparent 70%)`;
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transform =
+            "perspective(1000px) rotateX(0) rotateY(0) scale(1)";
+          glare.style.opacity = "0";
+        });
+      });
+
+      // --- 6. MAGNETIC BUTTONS ---
+      const magnetics = document.querySelectorAll(".magnetic");
+      magnetics.forEach((magnetic) => {
+        magnetic.addEventListener("mousemove", (e) => {
+          const rect = magnetic.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          magnetic.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
+        magnetic.addEventListener("mouseleave", () => {
+          magnetic.style.transform = "translate(0px, 0px)";
+        });
+      });
+
+      // --- 7. SCROLL REVEAL ---
+      gsap.utils
+        .toArray(
+          ".reveal-on-scroll, .section-header, .project-card, .featured-card"
+        )
+        .forEach((element) => {
+          gsap.from(element, {
+            scrollTrigger: { trigger: element, start: "top 85%" },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+          });
+        });
+    </script>
+  </body>
+</html>

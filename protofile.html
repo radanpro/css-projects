@@ -29,6 +29,7 @@
       :root {
         --bg-color: #050505;
         --text-color: #e0e0e0;
+        --new-text-color: #f0f0f0;
         --accent: #ff2a6d;
         --accent-2: #05d9e8;
         --card-bg: rgba(255, 255, 255, 0.03);
@@ -402,6 +403,43 @@
         filter: grayscale(0%);
       }
 
+      /* --- Marquee Section --- */
+      .marquee-section {
+        padding: 4rem 0;
+        background: var(--new-text-color);
+        color: var(--bg-color);
+        transform: rotate(-2deg) scale(1.05);
+        margin: 4rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .marquee-content {
+        display: inline-block;
+        animation: marquee 60s linear infinite;
+      }
+
+      .marquee-section:hover .marquee-content {
+        animation-duration: 30s;
+      }
+
+      .marquee-text {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-right: 4rem;
+      }
+
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
       /* --- PHILOSOPHY (NEW) --- */
       .philosophy-grid {
         display: grid;
@@ -541,11 +579,17 @@
 
     <!-- Navigation -->
     <nav>
-      <div class="logo">RADAN.</div>
+      <div class="logo magnetic">RADAN.</div>
       <ul class="nav-links">
-        <li><a href="#work" class="nav-link">Works</a></li>
-        <li><a href="#studio" class="nav-link">Studio</a></li>
-        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li class="magnetic">
+          <a href="#work" class="nav-link">Works</a>
+        </li>
+        <li class="magnetic">
+          <a href="#studio" class="nav-link">Studio</a>
+        </li>
+        <li class="magnetic">
+          <a href="#contact" class="nav-link">Contact</a>
+        </li>
       </ul>
     </nav>
 
@@ -588,7 +632,7 @@
         </div>
         <a href="#" class="featured-card magnetic">
           <img
-            src="https://picsum.photos/seed/featured/1200/800"
+            src="./images/image.jpg"
             alt="Featured Project"
             class="featured-img"
           />
@@ -612,7 +656,7 @@
           <!-- Card 1 -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/nebula/600/800"
+              src="./images/image1.jpg"
               alt="Nebula Finance"
               class="card-bg-img"
             />
@@ -626,7 +670,7 @@
           <!-- Card 2 -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/velocity/600/800"
+              src="./images/image2.jpg"
               alt="Velocity Automotive"
               class="card-bg-img"
             />
@@ -640,7 +684,7 @@
           <!-- Card 3 -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/apollo/600/800"
+              src="./images/image3.jpg"
               alt="Apollo Studios"
               class="card-bg-img"
             />
@@ -654,7 +698,7 @@
           <!-- Card 4 -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/kinetic/600/800"
+              src="./images/image4.jpg"
               alt="Kinetic Art"
               class="card-bg-img"
             />
@@ -668,7 +712,7 @@
           <!-- Card 5 (Added for length) -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/crypto/600/800"
+              src="./images/image5.jpg"
               alt="Crypto Wallet"
               class="card-bg-img"
             />
@@ -682,7 +726,7 @@
           <!-- Card 6 (Added for length) -->
           <article class="project-card tilt-card magnetic">
             <img
-              src="https://picsum.photos/seed/ai/600/800"
+              src="./images/image6.jpg"
               alt="AI Platform"
               class="card-bg-img"
             />
@@ -721,14 +765,26 @@
             >
           </div>
           <div class="about-visual reveal-on-scroll">
-            <img
-              src="https://picsum.photos/seed/studio/800/800"
-              alt="Studio Life"
-            />
+            <img src="./images/image7.jpg" alt="Studio Life" />
           </div>
         </div>
       </section>
 
+      <!-- Marquee -->
+      <section class="marquee-section">
+        <div class="marquee-content">
+          <span class="marquee-text"
+            >Web Development // Immersive 3D // UI/UX Design // Shader Art //
+            Creative Strategy // Web Development // Immersive 3D // UI/UX Design
+            // Shader Art // Creative Strategy //</span
+          >
+          <span class="marquee-text"
+            >Web Development // Immersive 3D // UI/UX Design // Shader Art //
+            Creative Strategy // Web Development // Immersive 3D // UI/UX Design
+            // Shader Art // Creative Strategy //</span
+          >
+        </div>
+      </section>
       <!-- NEW: Philosophy -->
       <section class="section-padding container">
         <div class="section-header">
@@ -989,7 +1045,7 @@
           const rect = magnetic.getBoundingClientRect();
           const x = e.clientX - rect.left - rect.width / 2;
           const y = e.clientY - rect.top - rect.height / 2;
-          magnetic.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+          magnetic.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
         });
         magnetic.addEventListener("mouseleave", () => {
           magnetic.style.transform = "translate(0px, 0px)";

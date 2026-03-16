@@ -28,7 +28,20 @@ const prompt = require('prompt-sync')();
  *          return "Invalid input".
  */
 
-const workdayFinder = (day) => ["Work", "Weekend"][+(day >4)];
+// const workdayFinder = (day) => ["Work", "Weekend"][+(day >4)];
 
-const number = prompt('Enter Day Number? ');
-console.log(`Your Input is  ${workdayFinder(number)}`);
+// const number = prompt('Enter Day Number? ');
+// console.log(`Your Input is  ${workdayFinder(number)}`);
+
+// ---
+/**
+ * challange: 26-03-16: 
+ *        create a function that takes a temperature in Celsius
+ *       and returns whether it is "Solid", "Liquid", or "Gas"
+ *      based on the following conditions:
+ */
+
+const TemperatureState = (temp) => ["Solid", "Liquid"][Math.sign(temp)];//[+(temp >= 0 && temp < 100)] || "Gas";
+
+const number = prompt('Enter Temperature in Celsius? ');
+console.log(`Your Input is  ${TemperatureState(number)}`);

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>مراحل القمر الفلكية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #05070a;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --accent-color: #facc15;
+        --text-primary: #ffffff;
+        --text-secondary: #94a3b8;
+        --moon-light: #fefce8;
+        --moon-shadow: #1e293b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Cairo", sans-serif;
+        min-height: 100vh;
+        background: radial-gradient(
+          circle at center,
+          #1e1b4b 0%,
+          #0f172a 50%,
+          #05070a 100%
+        );
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      /* Star background effect */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+          radial-gradient(1px 1px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
+          radial-gradient(1px 1px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
+          radial-gradient(1px 1px at 50px 160px, #ddd, rgba(0, 0, 0, 0)),
+          radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
+          radial-gradient(1px 1px at 130px 80px, #fff, rgba(0, 0, 0, 0)),
+          radial-gradient(1px 1px at 160px 120px, #ddd, rgba(0, 0, 0, 0));
+        background-repeat: repeat;
+        background-size: 200px 200px;
+        opacity: 0.3;
+        z-index: -1;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: 32px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+        background: linear-gradient(to bottom, #fff, #94a3b8);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+        justify-content: center;
+      }
+
+      input[type="date"] {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-family: inherit;
+        outline: none;
+        transition: all 0.3s;
+      }
+
+      input[type="date"]:focus {
+        border-color: var(--accent-color);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      button {
+        background: var(--accent-color);
+        color: #000;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(250, 204, 21, 0.3);
+      }
+
+      button:active {
+        transform: scale(0.95);
+      }
+
+      .moon-display {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 30px;
+        filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.2));
+      }
+
+      #svgMoon {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s ease-out;
+      }
+
+      .info-card {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: right;
+      }
+
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 8px;
+      }
+
+      .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .value {
+        font-weight: 700;
+        color: var(--accent-color);
+      }
+
+      /* Ramadan Greeting Card Styles */
+      .greeting-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05)
+        );
+        border-radius: 24px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .greeting-img {
+        width: 100%;
+        max-height: 250px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .greeting-text {
+        color: var(--text-primary);
+        line-height: 1.8;
+      }
+
+      .greeting-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 10px 0;
+        color: var(--accent-color);
+      }
+
+      .signature {
+        margin-top: 15px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--accent-color);
+        display: block;
+      }
+
+      .divider {
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        margin: 30px 0;
+      }
+
+      /* Custom date appearance */
+      ::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Ramadan Greeting Card -->
+      <div class="greeting-card">
+        <img
+          src="images/ramadan.jpg"
+          alt="Ramadan Mubarak"
+          class="greeting-img"
+          onerror="this.style.display = 'none'"
+        />
+        <div class="greeting-text">
+          <h1 class="greeting-title">رمضان مبارك</h1>
+          <p>
+            أهنئكم بحلول شهر رمضان المبارك، سائلين الله أن يتقبل منا ومنكم صالح
+            الأعمال، وأن يعيده علينا وعليكم باليمن والبركات.
+          </p>
+          <span class="signature">م. عبدالرحمن رعدان</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>مراحل القمر 🌒</h2>
+
+      <div class="input-group">
+        <input type="date" id="dateInput" />
+        <button onclick="updateMoonUI()">عرض المرحلة</button>
+      </div>
+
+      <div class="moon-display" id="moonContainer">
+        <div id="svgMoon">
+          <!-- Moon SVG will be injected here -->
+        </div>
+      </div>
+
+      <div id="result" class="info-card" style="display: none">
+        <!-- Data will be injected here -->
+      </div>
+    </div>
+
+    <script>
+      // Set default date to today
+      document.getElementById("dateInput").valueAsDate = new Date()
+
+      /**
+       * Calculate moon phase fraction (0-1)
+       * Based on simple Julian Date algorithm
+       */
+      function calculateMoonPhase(date) {
+        const year = date.getFullYear()
+        const month = date.getMonth() + 1
+        const day = date.getDate()
+
+        let lYear = year
+        let lMonth = month
+        if (lMonth < 3) {
+          lYear--
+          lMonth += 12
+        }
+
+        const A = Math.floor(lYear / 100)
+        const B = Math.floor(A / 4)
+        const C = 2 - A + B
+        const E = Math.floor(365.25 * (lYear + 4716))
+        const F = Math.floor(30.6001 * (lMonth + 1))
+        const jd = C + day + E + F - 1524.5
+
+        const daysSinceNew = jd - 2451549.5 // Days since Jan 1, 2000
+        const newMoons = daysSinceNew / 29.53058867
+        const phase = newMoons - Math.floor(newMoons)
+
+        return phase // 0..1
+      }
+
+      function getPhaseName(phase) {
+        if (phase < 0.03 || phase > 0.97) return "محاق (New Moon)"
+        if (phase < 0.22) return "هلال متزايد (Waxing Crescent)"
+        if (phase < 0.28) return "تربيع أول (First Quarter)"
+        if (phase < 0.47) return "أحدب متزايد (Waxing Gibbous)"
+        if (phase < 0.53) return "بدر (Full Moon)"
+        if (phase < 0.72) return "أحدب متناقص (Waning Gibbous)"
+        if (phase < 0.78) return "تربيع أخير (Last Quarter)"
+        return "هلال متناقص (Waning Crescent)"
+      }
+
+      /**
+       * Renders a realistic SVG moon based on phase
+       */
+      function renderMoonSVG(phase) {
+        const r = 50
+        // The terminator is an ellipse that varies its width
+        const cosPhi = Math.cos(phase * 2 * Math.PI)
+        const mag = Math.abs(cosPhi) * r
+        const isWaxing = phase <= 0.5
+
+        // Rules for SVG path in Northern Hemisphere:
+        // Waxing: Light on the Right. Inner arc (terminator) curves based on phase.
+        // Waning: Light on the Left.
+
+        let path = ""
+        if (isWaxing) {
+          const sweepOuter = 1
+          const sweepInner = phase < 0.25 ? 0 : 1
+          path = `M 50 0 A 50 50 0 0 ${sweepOuter} 50 100 A ${mag} 50 0 0 ${sweepInner} 50 0`
+        } else {
+          const sweepOuter = 0
+          const sweepInner = phase < 0.75 ? 1 : 0
+          path = `M 50 0 A 50 50 0 0 ${sweepOuter} 50 100 A ${mag} 50 0 0 ${sweepInner} 50 0`
+        }
+
+        return `
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="moonSurface" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#fefce8;stop-opacity:1" />
+                <stop offset="80%" style="stop-color:#facc15;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+              </radialGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+            <!-- Dark Moon Circle -->
+            <circle cx="50" cy="50" r="48" fill="#111827" />
+            <!-- Illuminated Path -->
+            <path d="${path}" fill="url(#moonSurface)" filter="url(#glow)" />
+            <!-- Subtle Texture/Craters -->
+            <mask id="moonMask">
+                <circle cx="50" cy="50" r="48" fill="white" />
+            </mask>
+            <g mask="url(#moonMask)" opacity="0.08" fill="#000">
+               <circle cx="35" cy="35" r="6" />
+               <circle cx="65" cy="45" r="8" />
+               <circle cx="45" cy="70" r="4" />
+               <circle cx="25" cy="65" r="3" />
+               <circle cx="75" cy="25" r="5" />
+            </g>
+          </svg>
+        `
+      }
+
+      function updateMoonUI() {
+        const dateInput = document.getElementById("dateInput").value
+        if (!dateInput) {
+          alert("الرجاء اختيار تاريخ")
+          return
+        }
+
+        const date = new Date(dateInput)
+        const phase = calculateMoonPhase(date)
+        const phaseName = getPhaseName(phase)
+        const illumination = (
+          (Math.abs(Math.cos(phase * Math.PI * 2) - 1) / 2) *
+          100
+        ).toFixed(1)
+        const age = (phase * 29.53).toFixed(1)
+
+        // Update SVG
+        document.getElementById("svgMoon").innerHTML = renderMoonSVG(phase)
+
+        // Update Info
+        const resultDiv = document.getElementById("result")
+        resultDiv.style.display = "block"
+        resultDiv.innerHTML = `
+          <div class="info-item">
+            <span class="label">اسم المرحلة</span>
+            <span class="value">${phaseName}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">نسبة الإضاءة</span>
+            <span class="value">${illumination}%</span>
+          </div>
+          <div class="info-item">
+            <span class="label">عمر القمر (أيام)</span>
+            <span class="value">${age} يوم</span>
+          </div>
+        `
+
+        // Animation punch
+        const moon = document.getElementById("moonContainer")
+        moon.style.transform = "scale(1.05)"
+        setTimeout(() => (moon.style.transform = "scale(1)"), 200)
+      }
+
+      // Initial call
+      updateMoonUI()
+    </script>
+  </body>
+</html>

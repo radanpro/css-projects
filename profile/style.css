@@ -238,18 +238,23 @@ nav {
 .about-image {
   position: relative;
 }
+
 .image-wrapper {
   width: 100%;
-  height: 400px;
+  height: auto;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 6px;
   border: 1px solid var(--border-color);
 }
 .image-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
+  object-fit: cover; /* يضمن أن الصورة تملأ الدائرة بدون تمطيط */
+  object-position: center; /* يركز القص على منتصف الصورة */
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.about-image.magnetic-card-wrap {
+  border-radius: 6px;
 }
 .magnetic-card-wrap:hover .image-wrapper img {
   transform: scale(1.05);
